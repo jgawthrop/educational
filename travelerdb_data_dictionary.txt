@@ -1,0 +1,118 @@
+Project Table Data Dictionary
+
+
+
+city_demo_dim
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+This table contains information about cities, their demographic characteristics, and what US state  or territory they may be associated with
+                
+Column Name                     Data Type   Description                                                     Source                                              Source Column(s)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+city_demo_key                   int         Primary Key                                                     derived                                             N/A
+city_state_terr_key             int         Foreign Key (state_terr_dim)                                    derived                                             N/A
+city_name                       varchar     name of the city                                                us-cities-demographics.csv                          City
+state_name                      varchar     name of the state the city belongs to                           us-cities-demographics.csv                          State
+state_code                      varchar     code of the state the city belongs to                           us-cities-demographics.csv                          State Code
+median_age                      decimal     median resident age of the city                                 us-cities-demographics.csv                          Median Age
+avg_household_size              decimal     average household size of the city                              us-cities-demographics.csv                          Average Household Size
+pop_total                       int         total population of the city                                    us-cities-demographics.csv                          Total Population
+pop_male                        int         male population of the city                                     us-cities-demographics.csv                          Male Population
+pop_female                      int         female population of the city                                   us-cities-demographics.csv                          Female Population
+pop_foreign_born                int         foreign-born population of the city                             us-cities-demographics.csv                          Foreign-Born
+pop_african_american            int         african-american population of the city                         us-cities-demographics.csv                          Race, Count
+pop_hispanic_latino             int         hispanic/latino population of the city                          us-cities-demographics.csv                          Race, Count
+pop_native_american             int         native american/native alaskan population of the city           us-cities-demographics.csv                          Race, Count
+pop_asian                       int         asian population of the city                                    us-cities-demographics.csv                          Race, Count
+pop_white                       int         white population of the city                                    us-cities-demographics.csv                          Race, Count
+
+
+
+date_dim
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+This table contains information about dates and classifications thereof
+                
+Column Name                     Data Type   Description                                                     Source                                              Source Column(s)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+date_key                        date        Calendar Date (Primary Key)                                     derived                                             N/A
+date_day                        int         day of the month of the date                                    derived                                             N/A
+date_week                       int         week of the year of the date                                    derived                                             N/A
+date_month                      int         month of the date                                               derived                                             N/A
+date_year                       int         year of the date                                                derived                                             N/A
+date_weekday                    varchar     weekday of the date                                             derived                                             N/A
+
+
+
+nation_dim
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+This table contains information about nations
+                
+Column Name                     Data Type   Description                                                     Source                                              Source Column(s)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+nation_key                      int         Primary Key                                                     derived N/A
+nation_code                     int         i94 code of the nation ("i94cntyl")                             countries.csv / I94_SAS_Labels_Descriptions.SAS     COUNTRY_CODE
+nation_descr                    varchar     i94 description  of the nation ("i94cntyl")                     countries.csv / I94_SAS_Labels_Descriptions.SAS     COUNTRY_DESCR
+
+
+
+port_dim                
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+This table contains information about ports and what cities and/or US state territories they are associated with
+                
+Column Name                     Data Type   Description                                                     Source                                              Source Column(s)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+port_key                        int         Primary Key                                                     derived                                             N/A
+port_code                       varchar     i94 code of the port ("$i94prtl")                               ports.csv / I94_SAS_Labels_Descriptions.SAS         PORT_CODE
+port_descr                      varchar     i94 description of the port ("$i94prtl")                        ports.csv / I94_SAS_Labels_Descriptions.SAS         PORT_DESCR
+port_state_terr                 varchar     US State / Territory derived from the port_descr                ports.csv / I94_SAS_Labels_Descriptions.SAS         PORT_US_STATE_TERR
+port_state_terr_key             int         Foreign Key (state_terr_dim)                                    derived                                             N/A
+port_city_demo_key              int         Foreign Key (city_demo_dim)                                     derived                                             N/A
+
+
+
+state_terr_dim              
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+This table contains information about ports and what cities and/or US state territories they are associated with
+                
+Column Name                     Data Type   Description                                                     Source                                              Source Column(s)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+state_terr_key                  int         Primary Key                                                     derived                                             N/A
+state_terr_code                 varchar     i94 code of the port ("i94addrl")                               addr_codes.csv / I94_SAS_Labels_Descriptions.SAS    ADDR_CODE
+state_terr_descr                varchar     i94 code of the port ("i94addrl")                               addr_codes.csv / I94_SAS_Labels_Descriptions.SAS    ADDR_DESCR
+
+
+
+traveler_fact               
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+This table contains information about ports and what cities and/or US state territories they are associated with
+
+Column Name                     Data Type   Description                                                     Source                                              Source Column(s)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+arrival_date                    date        Date of traveler arrival                                        I94 Data                                            arrdate
+citizen_nation_key              int4        nation of traveler citizenship (foreign key to nation_dim)      I94 Data / derived                                  i94cit
+residence_nation_key            int4        nation of traveler residence (foreign key to nation_dim)        I94 Data / derived                                  i94res
+traveler_port_key               int4        port of traveler arrival                                        I94 Data / derived                                  i94port
+traveler_port_state_terr_key    int4        US state / territory of port (foreign key to state_terr_dim)    I94 Data / derived                                  i94port, port_state_terr_key
+visiting_state_terr_key         int4        US state / territory of visitation record                       I94 Data / derived                                  i94addr
+gender_reported                 int2        = 1 if gender column is not null                                I94 Data                                            gender
+gender_male                     int2        = 1 if gender = 'M'                                             I94 Data                                            gender
+gender_female                   int2        = 1 if gender = 'F'                                             I94 Data                                            gender
+gender_other                    int2        = 1 if gender is not null and gender not in ('M', 'F')          I94 Data                                            gender
+age_reported                    int2        = 1 if age column is not null                                   I94 Data                                            i94bir
+age_0_11                        int2        = 1 if age column value between 0 and 11                        I94 Data                                            i94bir
+age_12_17                       int2        = 1 if age column value between 12 and 17                       I94 Data                                            i94bir
+age_18_24                       int2        = 1 if age column value between 18 and 24                       I94 Data                                            i94bir
+age_25_34                       int2        = 1 if age column value between 25 and 34                       I94 Data                                            i94bir
+age_35_44                       int2        = 1 if age column value between 35 and 44                       I94 Data                                            i94bir
+age_45_54                       int2        = 1 if age column value between 45 and 54                       I94 Data                                            i94bir
+age_55_64                       int2        = 1 if age column value between 55 and 64                       I94 Data                                            i94bir
+age_65_74                       int2        = 1 if age column value between 65 and 74                       I94 Data                                            i94bir
+age_75p                         int2        = 1 if age column value is 75 or greater                        I94 Data                                            i94bir
+arrival_type_reported           int2        = 1 if i94mode column is not null and != 9                      I94 Data / I94_SAS_Labels_Descriptions.SAS          i94mode
+air_arrival                     int2        = 1 if i94mode column value = 1                                 I94 Data / I94_SAS_Labels_Descriptions.SAS          i94mode
+sea_arrival                     int2        = 1 if i94mode column value = 2                                 I94 Data / I94_SAS_Labels_Descriptions.SAS          i94mode
+land_arrival                    int2        = 1 if i94mode column value = 3                                 I94 Data / I94_SAS_Labels_Descriptions.SAS          i94mode
+visa_type_reported              int2        = 1 if i94visa column value in (1,2,3)                          I94 Data / I94_SAS_Labels_Descriptions.SAS          i94visa
+business_visa                   int2        = 1 if i94visa column value = 1                                 I94 Data / I94_SAS_Labels_Descriptions.SAS          i94visa
+pleasure_visa                   int2        = 1 if i94visa column value = 2                                 I94 Data / I94_SAS_Labels_Descriptions.SAS          i94visa
+student_visa                    int2        = 1 if i94visa column value = 3                                 I94 Data / I94_SAS_Labels_Descriptions.SAS          i94visa
+traveler_count                  int4        Sum of travelers that have the values of columns 1-28           derived                                             N/A
